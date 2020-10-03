@@ -14,8 +14,9 @@ var (
 )
 
 type ActionType struct {
-	name            string
-	votingTimeHours int
+	name               string
+	approvalPercentage int
+	votingTimeHours    int
 }
 
 var (
@@ -23,16 +24,18 @@ var (
 )
 
 type Action struct {
-	actionType ActionType
-	info       string
-	authorID   string
-	time       time.Time
-	msgID      string
-	votes      int
+	actionType  ActionType
+	info        string
+	authorID    string
+	time        time.Time
+	msgID       string
+	votingMsgID string
+	votesUp     float32
+	votesDown   float32
 }
 
 func initActionTypes() {
-	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 12})
+	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 1, approvalPercentage: 51})
 }
 
 func findActionType(actionType string) ActionType {
@@ -57,6 +60,9 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 
 	embed := &discordgo.MessageEmbed{
 		Title: "Action",
+
+		Color: 3108255,
+
 		Author: &discordgo.MessageEmbedAuthor{
 			Name:    msg.Author.Username,
 			IconURL: msg.Author.AvatarURL(""),
@@ -72,8 +78,16 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 		},
 	}
 
+	message, _ := client.ChannelMessageSendEmbed(ACTIONVOTINGID, embed)
 
-	client.ChannelMessageSendEmbed(ACTIONVOTINGID, embed)
+	client.MessageReactionAdd(message.ChannelID, message.ID, "👍")
+	client.MessageReactionAdd(message.ChannelID, message.ID, "👎")
+
+	action.votingMsgID = message.ID
+
+	time.AfterFunc(time.Minute*time.Duration(action.actionType.votingTimeHours), func() {
+		actionResult(action, client)
+	})
 
 }
 
@@ -82,11 +96,17 @@ func formatTime(action Action) string {
 	var timeMeridian string
 	hour12 := (hour % 12)
 
-	if (hour % 24)/12 >= 1 {
+	if (hour%24)/12 >= 1 {
 		timeMeridian = "PM"
 	} else {
 		timeMeridian = "AM"
 	}
+
+	if hour12 == 0 {
+		hour12 = 12
+	}
+
+	// 06 != 6 | 6:30 != 6:3
 
 	return fmt.Sprintf("%d hours, at %d:%d %s", action.actionType.votingTimeHours, hour12, action.time.Minute(), timeMeridian)
 }
