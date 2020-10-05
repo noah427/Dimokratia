@@ -18,7 +18,7 @@ var (
 type ActionType struct {
 	name               string
 	approvalPercentage int
-	votingTimeHours    int
+	votingTimeMinutes  int
 }
 
 var (
@@ -63,12 +63,12 @@ func (a *Action) prettyPrintInfo() string {
 }
 
 func initActionTypes() {
-	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 30, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeHours: 30, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeHours: 30, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeHours: 30, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeHours: 30, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeHours: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeMinutes: 30, approvalPercentage: 51})
 }
 
 func findActionType(actionType string) ActionType {
@@ -154,28 +154,28 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 
 	action.votingMsgID = message.ID
 
-	time.AfterFunc(time.Minute*time.Duration(action.actionType.votingTimeHours), func() {
+	time.AfterFunc(time.Minute*time.Duration(action.actionType.votingTimeMinutes), func() {
 		actionResult(action, client)
 	})
 
 }
 
 func formatTime(action Action) string {
-	hour := action.time.Hour() + action.actionType.votingTimeHours
-	var timeMeridian string
-	hour12 := (hour % 12)
+	// hour := action.time.Hour() + action.actionType.votingTimeMinutes
+	// var timeMeridian string
+	// hour12 := (hour % 12)
 
-	if (hour%24)/12 >= 1 {
-		timeMeridian = "PM"
-	} else {
-		timeMeridian = "AM"
-	}
+	// if (hour%24)/12 >= 1 {
+	// 	timeMeridian = "PM"
+	// } else {
+	// 	timeMeridian = "AM"
+	// }
 
-	if hour12 == 0 {
-		hour12 = 12
-	}
+	// if hour12 == 0 {
+	// 	hour12 = 12
+	// }
 
 	// 06 != 6 | 6:30 != 6:3
 
-	return fmt.Sprintf("%d hours, at %d:%d %s", action.actionType.votingTimeHours, hour12, action.time.Minute(), timeMeridian)
+	return fmt.Sprintf("%d minutes", action.actionType.votingTimeMinutes)
 }

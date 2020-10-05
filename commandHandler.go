@@ -21,5 +21,18 @@ func loadChannelIDs() {
 func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.ChannelID == ACTIONSUBMISSIONID {
 		parseActionProposal(msg, client)
+		return
+	}
+
+	if msg.Content == "%help" {
+		client.ChannelMessageSend(msg.ChannelID, `
+		commands:
+		%propose textchannelcreate "channel name"
+		%propose channeldelete "channel name"
+		%propose kickmember @username
+		%propose banmember @username
+		%propose applyrole "role name" @username
+		%propose removerole "role name" @username
+		`)
 	}
 }
