@@ -29,6 +29,17 @@ func actionResult(action Action, client *discordgo.Session) {
 	case "textchannelcreate":
 		client.GuildChannelCreate(SERVERID, action.info, discordgo.ChannelTypeGuildText)
 		break
+	case "channeldelete":
+		channels, _ := client.GuildChannels(SERVERID)
+		var selected *discordgo.Channel
+		for _, channel := range channels {
+			if channel.Name == action.info {
+				selected = channel
+			}
+		}
+
+		client.ChannelDelete(selected.ID)
+		break
 	}
 
 }

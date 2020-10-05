@@ -36,6 +36,7 @@ type Action struct {
 
 func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeHours: 1, approvalPercentage: 51})
 }
 
 func findActionType(actionType string) ActionType {
