@@ -51,12 +51,24 @@ func findActionType(actionType string) ActionType {
 func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session) {
 	commandWhole := parseActionRegex.FindAllStringSubmatch(msg.Content, -1)
 
+	actionType := findActionType(strings.ToLower(commandWhole[0][2]))
+
 	action := Action{
-		actionType: findActionType(strings.ToLower(commandWhole[0][2])),
-		info:       commandWhole[0][3],
+		actionType: actionType,
 		authorID:   msg.Author.ID,
 		msgID:      msg.ID,
 		time:       time.Now(),
+	}
+
+	switch actionType.name {
+	case "kickmember":
+		action.info = msg.Mentions[0].ID
+		break
+	case "banmember":
+		action.info = msg.Mentions[0].ID
+		break
+	default:
+		action.info = commandWhole[0][2]
 	}
 
 	embed := &discordgo.MessageEmbed{

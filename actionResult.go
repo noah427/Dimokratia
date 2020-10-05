@@ -40,6 +40,12 @@ func actionResult(action Action, client *discordgo.Session) {
 
 		client.ChannelDelete(selected.ID)
 		break
+	case "kickmember":
+		client.GuildMemberDelete(SERVERID, action.info)
+		break
+	case "banmember":
+		client.GuildBanCreate(SERVERID, action.info, 10)
+		break
 	}
 
 }

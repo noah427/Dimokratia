@@ -6,13 +6,13 @@ actions that can be voted on as of now :
 
 * create channel
 * delete channel
+* kick user
+* ban user
 
 actions that will be possible to vote on in the future :
 
 ### sooner
 
-* kick user
-* ban user
 * apply x role to user
 * remove x role from user
 * create x role
