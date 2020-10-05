@@ -8,6 +8,7 @@ direct democracy bot for discord.
 * delete channel
 * kick user
 * ban user
+* unban user
 * apply x role to user
 * remove x role from user
 

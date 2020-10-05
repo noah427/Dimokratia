@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z ]+)"`)
+	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9 ]+)"`)
 	parseNoInfoRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
-	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z ]+)" <@!(\d+)>`)
+	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z0-9 ]+)" <@!(\d+)>`)
 )
 
 type ActionType struct {
@@ -44,6 +44,10 @@ func (a *Action) prettyPrintInfo() string {
 		user, _ := client.User(a.info)
 		response = user.Username
 		break
+	case "unbanmember":
+		user, _ := client.User(a.info)
+		response = user.Username
+		break
 	case "banmember":
 		user, _ := client.User(a.info)
 		response = user.Username
@@ -67,6 +71,7 @@ func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "unbanmember", votingTimeMinutes: 1, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeMinutes: 30, approvalPercentage: 51})
 }
@@ -105,8 +110,17 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 	switch actionType.name {
 	case "kickmember":
 		action.info = msg.Mentions[0].ID
+		if len(msg.Mentions) == 0 {
+			return
+		}
+		break
+	case "unbanmember":
+		action.info = commandWhole[0][2]
 		break
 	case "banmember":
+		if len(msg.Mentions) == 0 {
+			return
+		}
 		action.info = msg.Mentions[0].ID
 		break
 	case "applyrole":

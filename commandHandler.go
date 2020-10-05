@@ -31,6 +31,7 @@ func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
 		%propose channeldelete "channel name"
 		%propose kickmember @username
 		%propose banmember @username
+		%propose unbanmember userID
 		%propose applyrole "role name" @username
 		%propose removerole "role name" @username
 		`)

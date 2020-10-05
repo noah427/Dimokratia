@@ -43,11 +43,11 @@ func actionResult(action Action, client *discordgo.Session) {
 	case "kickmember":
 		client.GuildMemberDelete(SERVERID, action.info)
 		break
-	case "banmember":
-		client.GuildBanCreate(SERVERID, action.info, 0)
-		break
 	case "unbanmember":
 		client.GuildBanDelete(SERVERID, action.info)
+		break
+	case "banmember":
+		client.GuildBanCreate(SERVERID, action.info, 0)
 		break
 	case "applyrole":
 		roles, _ := client.GuildRoles(SERVERID)
