@@ -46,6 +46,31 @@ func actionResult(action Action, client *discordgo.Session) {
 	case "banmember":
 		client.GuildBanCreate(SERVERID, action.info, 10)
 		break
+	case "applyrole":
+		roles, _ := client.GuildRoles(SERVERID)
+		var selected *discordgo.Role
+
+		for _, role := range roles {
+			if role.Name == action.info {
+				selected = role
+			}
+		}
+
+		client.GuildMemberRoleAdd(SERVERID, action.info2, selected.ID)
+
+		break
+	case "removerole":
+		roles, _ := client.GuildRoles(SERVERID)
+		var selected *discordgo.Role
+
+		for _, role := range roles {
+			if role.Name == action.info {
+				selected = role
+			}
+		}
+
+		client.GuildMemberRoleRemove(SERVERID, action.info2, selected.ID)
+		break
 	}
 
 }
@@ -61,7 +86,7 @@ func postActionResults(action Action, client *discordgo.Session, result bool) {
 				{Name: "Downvotes: ", Value: strconv.Itoa(int(action.votesDown))},
 				{Name: "Percentage: ", Value: strconv.Itoa(int(((action.votesUp) / (action.votesUp + action.votesDown) * 100)))},
 				{Name: "Action Type: ", Value: action.actionType.name},
-				{Name: "Action Information: ", Value: action.info},
+				{Name: "Action Information: ", Value: action.prettyPrintInfo()},
 			},
 		}
 	} else {
@@ -73,7 +98,7 @@ func postActionResults(action Action, client *discordgo.Session, result bool) {
 				{Name: "Downvotes: ", Value: strconv.Itoa(int(action.votesDown))},
 				{Name: "Percentage: ", Value: strconv.Itoa(int(((action.votesUp) / (action.votesUp + action.votesDown) * 100)))},
 				{Name: "Action Type: ", Value: action.actionType.name},
-				{Name: "Action Information: ", Value: action.info},
+				{Name: "Action Information: ", Value: action.prettyPrintInfo()},
 			},
 		}
 	}

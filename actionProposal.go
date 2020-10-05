@@ -10,7 +10,9 @@ import (
 )
 
 var (
-	parseActionRegex = regexp.MustCompile(`%([A-Za-z]+) ([A-Za-z]+) "([A-Za-z ]+)"`)
+	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z ]+)"`)
+	parseNoInfoRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
+	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z ]+)" <@!(\d+)>`)
 )
 
 type ActionType struct {
@@ -26,6 +28,7 @@ var (
 type Action struct {
 	actionType  ActionType
 	info        string
+	info2       string
 	authorID    string
 	time        time.Time
 	msgID       string
@@ -34,9 +37,38 @@ type Action struct {
 	votesDown   float32
 }
 
+func (a *Action) prettyPrintInfo() string {
+	var response string
+	switch a.actionType.name {
+	case "kickmember":
+		user, _ := client.User(a.info)
+		response = user.Username
+		break
+	case "banmember":
+		user, _ := client.User(a.info)
+		response = user.Username
+		break
+	case "applyrole":
+		user, _ := client.User(a.info2)
+		response = fmt.Sprintf("Role name = %s, Username = %s", a.info, user.Username)
+		break
+	case "removerole":
+		user, _ := client.User(a.info2)
+		response = fmt.Sprintf("Role name = %s, Username = %s", a.info, user.Username)
+		break
+	default:
+		response = a.info
+	}
+	return response
+}
+
 func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 1, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeHours: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeHours: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeHours: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeHours: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeHours: 1, approvalPercentage: 51})
 }
 
 func findActionType(actionType string) ActionType {
@@ -51,7 +83,17 @@ func findActionType(actionType string) ActionType {
 func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session) {
 	commandWhole := parseActionRegex.FindAllStringSubmatch(msg.Content, -1)
 
-	actionType := findActionType(strings.ToLower(commandWhole[0][2]))
+	var actionType ActionType
+
+	if len(commandWhole) != 0 {
+		actionType = findActionType(strings.ToLower(commandWhole[0][1]))
+	} else {
+		commandWhole = parseNoInfoRegex.FindAllStringSubmatch(msg.Content, -1)
+		if len(commandWhole) == 0 {
+			return
+		}
+		actionType = findActionType(strings.ToLower(commandWhole[0][1]))
+	}
 
 	action := Action{
 		actionType: actionType,
@@ -66,6 +108,20 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 		break
 	case "banmember":
 		action.info = msg.Mentions[0].ID
+		break
+	case "applyrole":
+		secondParsing := parseMentionRegex.FindAllStringSubmatch(msg.Content, -1)
+
+		action.info = commandWhole[0][2]
+		action.info2 = secondParsing[0][1]
+
+		break
+	case "removerole":
+		secondParsing := parseMentionRegex.FindAllStringSubmatch(msg.Content, -1)
+
+		action.info = commandWhole[0][2]
+		action.info2 = secondParsing[0][1]
+
 		break
 	default:
 		action.info = commandWhole[0][2]
@@ -82,7 +138,7 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 		},
 		Fields: []*discordgo.MessageEmbedField{
 			{Name: "Type: ", Value: action.actionType.name},
-			{Name: "Info: ", Value: action.info},
+			{Name: "Info: ", Value: action.prettyPrintInfo()},
 			{Name: "Ends in: ", Value: formatTime(action)},
 		},
 
