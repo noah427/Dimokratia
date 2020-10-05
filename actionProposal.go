@@ -63,12 +63,12 @@ func (a *Action) prettyPrintInfo() string {
 }
 
 func initActionTypes() {
-	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 1, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeHours: 1, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeHours: 1, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeHours: 1, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeHours: 1, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeHours: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeHours: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeHours: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeHours: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeHours: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeHours: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeHours: 30, approvalPercentage: 51})
 }
 
 func findActionType(actionType string) ActionType {
