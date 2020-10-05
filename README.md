@@ -14,7 +14,12 @@ direct democracy bot for discord.
 ## actions that will be possible to vote on in the future :
 
 ### sooner
-...
+
+
+* create x role
+* delete x role
+
+
 ### later
 
 
@@ -22,5 +27,5 @@ direct democracy bot for discord.
 * change server pfp
 * change role perms (only some perms changable)
 * change channel perms (only some perms changable)
-* create x role
-* delete x role
+* add emoji
+* remove emoji
