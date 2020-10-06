@@ -46,6 +46,7 @@ func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
 		%propose unbanmember userID
 		%propose applyrole "role name" @username
 		%propose removerole "role name" @username
+		%propose addemoji "emojiName,discordfileurl"
 		`)
 	}
 }

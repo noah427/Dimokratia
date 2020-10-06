@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9\./:, ]+)"`)
+	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9\./:?, ]+)"`)
 	parseNoInfoRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
-	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z0-9\./:, ]+)" <@!(\d+)>`)
+	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z0-9\./:?, ]+)" <@!(\d+)>`)
 )
 
 type ActionType struct {
