@@ -71,7 +71,7 @@ func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "kickmember", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "banmember", votingTimeMinutes: 30, approvalPercentage: 51})
-	actionTypes = append(actionTypes, ActionType{name: "unbanmember", votingTimeMinutes: 1, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "unbanmember", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeMinutes: 30, approvalPercentage: 51})
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 
 	"os"
+	"strings"
 )
 
 var SERVERID string
@@ -11,11 +12,22 @@ var ACTIONRESULTSID string
 var ACTIONSUBMISSIONID string
 var ACTIONVOTINGID string
 
+//
+var UNTOUCHABLEROLES []string
+var UNTOUCHABLETOPICS []string
+var UNTOUCHABLECHANNELS []string
+var UNTOUCHABLEUSERS []string
+
 func loadChannelIDs() {
 	SERVERID = os.Getenv("SERVERID")
 	ACTIONSUBMISSIONID = os.Getenv("ACTIONSUBMISSION")
 	ACTIONVOTINGID = os.Getenv("ACTIONVOTING")
 	ACTIONRESULTSID = os.Getenv("ACTIONRESULTS")
+	//
+	UNTOUCHABLEROLES = strings.Split(os.Getenv("UNTOUCHABLEROLES"), ",")
+	UNTOUCHABLETOPICS = strings.Split(os.Getenv("UNTOUCHABLETOPICS"), ",")
+	UNTOUCHABLECHANNELS = strings.Split(os.Getenv("UNTOUCHABLECHANNELS"), ",")
+	UNTOUCHABLEUSERS = strings.Split(os.Getenv("UNTOUCHABLEUSERS"), ",")
 }
 
 func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {

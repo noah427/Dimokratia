@@ -38,16 +38,29 @@ func actionResult(action Action, client *discordgo.Session) {
 			}
 		}
 
+		if Has(UNTOUCHABLETOPICS, selected.ParentID) {
+			// don't break the core functions of the server mk thx
+			return
+		} else if Has(UNTOUCHABLECHANNELS, selected.ID) {
+			return
+		}
+
 		client.ChannelDelete(selected.ID)
 		break
 	case "kickmember":
 		client.GuildMemberDelete(SERVERID, action.info)
+		if Has(UNTOUCHABLEUSERS, action.info) {
+			return
+		}
 		break
 	case "unbanmember":
 		client.GuildBanDelete(SERVERID, action.info)
 		break
 	case "banmember":
 		client.GuildBanCreate(SERVERID, action.info, 0)
+		if Has(UNTOUCHABLEUSERS, action.info) {
+			return
+		}
 		break
 	case "applyrole":
 		roles, _ := client.GuildRoles(SERVERID)
@@ -57,6 +70,11 @@ func actionResult(action Action, client *discordgo.Session) {
 			if role.Name == action.info {
 				selected = role
 			}
+		}
+
+		if Has(UNTOUCHABLEROLES, selected.ID) {
+			// no retards no admin for you
+			return
 		}
 
 		client.GuildMemberRoleAdd(SERVERID, action.info2, selected.ID)
@@ -70,6 +88,11 @@ func actionResult(action Action, client *discordgo.Session) {
 			if role.Name == action.info {
 				selected = role
 			}
+		}
+
+		if Has(UNTOUCHABLEROLES, selected.ID) {
+			// no retards no admin for you
+			return
 		}
 
 		client.GuildMemberRoleRemove(SERVERID, action.info2, selected.ID)
