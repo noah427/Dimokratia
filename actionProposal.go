@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9 ]+)"`)
+	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9\./:, ]+)"`)
 	parseNoInfoRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
-	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z0-9 ]+)" <@!(\d+)>`)
+	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z0-9\./:, ]+)" <@!(\d+)>`)
 )
 
 type ActionType struct {
@@ -74,6 +74,7 @@ func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "unbanmember", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeMinutes: 30, approvalPercentage: 51})
+	actionTypes = append(actionTypes, ActionType{name: "addemoji", votingTimeMinutes: 30, approvalPercentage: 51})
 }
 
 func findActionType(actionType string) ActionType {
@@ -108,6 +109,10 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 	}
 
 	switch actionType.name {
+	case "addemoji":
+		info := strings.Split(commandWhole[0][2], ",")
+		action.info = info[0]
+		action.info2 = info[1]
 	case "kickmember":
 		action.info = msg.Mentions[0].ID
 		if len(msg.Mentions) == 0 {

@@ -11,6 +11,7 @@ direct democracy bot for discord.
 * unban user
 * apply x role to user
 * remove x role from user
+* add emoji
 
 ## actions that will be possible to vote on in the future :
 
@@ -28,5 +29,4 @@ direct democracy bot for discord.
 * change server pfp
 * change role perms (only some perms changable)
 * change channel perms (only some perms changable)
-* add emoji
 * remove emoji
