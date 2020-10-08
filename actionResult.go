@@ -68,10 +68,16 @@ func actionResult(action Action, client *discordgo.Session) {
 		roles, _ := client.GuildRoles(SERVERID)
 		var selected *discordgo.Role
 
+		selected = nil
+
 		for _, role := range roles {
 			if role.Name == action.info {
 				selected = role
 			}
+		}
+
+		if selected == nil {
+			return
 		}
 
 		if Has(UNTOUCHABLEROLES, selected.ID) {
@@ -86,10 +92,16 @@ func actionResult(action Action, client *discordgo.Session) {
 		roles, _ := client.GuildRoles(SERVERID)
 		var selected *discordgo.Role
 
+		selected = nil
+
 		for _, role := range roles {
 			if role.Name == action.info {
 				selected = role
 			}
+		}
+
+		if selected == nil {
+			return
 		}
 
 		if Has(UNTOUCHABLEROLES, selected.ID) {

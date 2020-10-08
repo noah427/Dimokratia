@@ -10,9 +10,8 @@ import (
 )
 
 var (
-	parseActionRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9\./:?, ]+)"`)
-	parseNoInfoRegex  = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
-	parseMentionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) (?:[A-Za-z]+) "(?:[A-Za-z0-9\./:?, ]+)" <@!(\d+)>`)
+	parseActionRegex = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+) "([A-Za-z0-9\./:?,\- ]+)"`)
+	parseNoInfoRegex = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
 )
 
 type ActionType struct {
@@ -92,13 +91,21 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 	var actionType ActionType
 
 	if len(commandWhole) != 0 {
-		actionType = findActionType(strings.ToLower(commandWhole[0][1]))
-	} else {
-		commandWhole = parseNoInfoRegex.FindAllStringSubmatch(msg.Content, -1)
-		if len(commandWhole) == 0 {
-			return
+		if len(commandWhole[0]) == 0 {
+			commandWhole = parseNoInfoRegex.FindAllStringSubmatch(msg.Content, -1)
+			if len(commandWhole) == 0 {
+				return
+			} else if len(commandWhole[0]) == 0 {
+				return
+			}
+			actionType = findActionType(strings.ToLower(commandWhole[0][1]))
+		} else {
+
+			actionType = findActionType(strings.ToLower(commandWhole[0][1]))
 		}
-		actionType = findActionType(strings.ToLower(commandWhole[0][1]))
+
+	} else {
+		return
 	}
 
 	action := Action{
@@ -129,17 +136,21 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 		action.info = msg.Mentions[0].ID
 		break
 	case "applyrole":
-		secondParsing := parseMentionRegex.FindAllStringSubmatch(msg.Content, -1)
+		if len(msg.Mentions) == 0 {
+			return
+		}
 
 		action.info = commandWhole[0][2]
-		action.info2 = secondParsing[0][1]
+		action.info2 = msg.Mentions[0].ID
 
 		break
 	case "removerole":
-		secondParsing := parseMentionRegex.FindAllStringSubmatch(msg.Content, -1)
+		if len(msg.Mentions) == 0 {
+			return
+		}
 
 		action.info = commandWhole[0][2]
-		action.info2 = secondParsing[0][1]
+		action.info2 = msg.Mentions[0].ID
 
 		break
 	default:

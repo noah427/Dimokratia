@@ -43,10 +43,19 @@ func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
 		%propose channeldelete "channel name"
 		%propose kickmember @username
 		%propose banmember @username
-		%propose unbanmember userID
+		%propose unbanmember "userID"
 		%propose applyrole "role name" @username
 		%propose removerole "role name" @username
 		%propose addemoji "emojiName,discordfileurl"
+		`)
+	}
+
+	if msg.Content == "%roles" {
+		client.ChannelMessageSend(msg.ChannelID, `
+		Text-Enforcer
+		Voice-Enforcer
+		Muted
+		VC-Muted
 		`)
 	}
 }
