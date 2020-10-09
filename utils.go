@@ -32,3 +32,12 @@ func Has(array []string, value string) bool {
 
 	return false
 }
+
+func findActionType(actionType string) ActionType {
+	for _, action := range actionTypes {
+		if action.name == actionType {
+			return action
+		}
+	}
+	return ActionType{}
+}

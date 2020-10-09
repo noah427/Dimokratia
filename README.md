@@ -18,15 +18,13 @@ direct democracy bot for discord.
 ### sooner
 
 
-* create x role
-* delete x role
-
+* change server name
+* change server pfp
 
 ### later
 
-
-* change server name
-* change server pfp
 * change role perms (only some perms changable)
 * change channel perms (only some perms changable)
 * remove emoji
+* create x role
+* delete x role

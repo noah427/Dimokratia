@@ -14,57 +14,6 @@ var (
 	parseNoInfoRegex = regexp.MustCompile(`%(?:[A-Za-z]+) ([A-Za-z]+)`)
 )
 
-type ActionType struct {
-	name               string
-	approvalPercentage int
-	votingTimeMinutes  int
-}
-
-var (
-	actionTypes []ActionType
-)
-
-type Action struct {
-	actionType  ActionType
-	info        string
-	info2       string
-	authorID    string
-	time        time.Time
-	msgID       string
-	votingMsgID string
-	votesUp     float32
-	votesDown   float32
-}
-
-func (a *Action) prettyPrintInfo() string {
-	var response string
-	switch a.actionType.name {
-	case "kickmember":
-		user, _ := client.User(a.info)
-		response = user.Username
-		break
-	case "unbanmember":
-		user, _ := client.User(a.info)
-		response = user.Username
-		break
-	case "banmember":
-		user, _ := client.User(a.info)
-		response = user.Username
-		break
-	case "applyrole":
-		user, _ := client.User(a.info2)
-		response = fmt.Sprintf("Role name = %s, Username = %s", a.info, user.Username)
-		break
-	case "removerole":
-		user, _ := client.User(a.info2)
-		response = fmt.Sprintf("Role name = %s, Username = %s", a.info, user.Username)
-		break
-	default:
-		response = a.info
-	}
-	return response
-}
-
 func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "textchannelcreate", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "channeldelete", votingTimeMinutes: 30, approvalPercentage: 51})
@@ -74,15 +23,6 @@ func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "applyrole", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeMinutes: 30, approvalPercentage: 51})
 	actionTypes = append(actionTypes, ActionType{name: "addemoji", votingTimeMinutes: 30, approvalPercentage: 51})
-}
-
-func findActionType(actionType string) ActionType {
-	for _, action := range actionTypes {
-		if action.name == actionType {
-			return action
-		}
-	}
-	return ActionType{}
 }
 
 func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session) {
@@ -100,12 +40,17 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 			}
 			actionType = findActionType(strings.ToLower(commandWhole[0][1]))
 		} else {
-
 			actionType = findActionType(strings.ToLower(commandWhole[0][1]))
 		}
 
 	} else {
-		return
+		commandWhole = parseNoInfoRegex.FindAllStringSubmatch(msg.Content, -1)
+		if len(commandWhole) == 0 {
+			return
+		} else if len(commandWhole[0]) == 0 {
+			return
+		}
+		actionType = findActionType(strings.ToLower(commandWhole[0][1]))
 	}
 
 	action := Action{
@@ -120,6 +65,7 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 		info := strings.Split(commandWhole[0][2], ",")
 		action.info = info[0]
 		action.info2 = info[1]
+
 	case "kickmember":
 		action.info = msg.Mentions[0].ID
 		if len(msg.Mentions) == 0 {
@@ -155,6 +101,14 @@ func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session
 		break
 	default:
 		action.info = commandWhole[0][2]
+	}
+
+	legal := action.checkLegal()
+
+	action.reactStatus(legal)
+
+	if !legal {
+		return
 	}
 
 	embed := &discordgo.MessageEmbed{

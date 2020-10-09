@@ -5,6 +5,7 @@ import (
 
 	"os"
 	"strings"
+	"fmt"
 )
 
 var SERVERID string
@@ -31,6 +32,7 @@ func loadChannelIDs() {
 }
 
 func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
+	fmt.Println(msg.Content)
 	if msg.ChannelID == ACTIONSUBMISSIONID {
 		parseActionProposal(msg, client)
 		return
@@ -52,6 +54,7 @@ func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	if msg.Content == "%roles" {
 		client.ChannelMessageSend(msg.ChannelID, `
+
 		Text-Enforcer
 		Voice-Enforcer
 		Muted
