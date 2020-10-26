@@ -12,13 +12,12 @@ direct democracy bot for discord.
 * apply x role to user
 * remove x role from user
 * add emoji
+* change server name
 
 ## actions that will be possible to vote on in the future :
 
 ### sooner
 
-
-* change server name
 * change server pfp
 
 ### later

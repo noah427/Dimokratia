@@ -11,6 +11,7 @@ type ActionType struct {
 	name               string
 	approvalPercentage int
 	votingTimeMinutes  int
+	infoNeeded         bool
 }
 
 var (

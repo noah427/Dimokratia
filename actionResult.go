@@ -28,6 +28,9 @@ func actionResult(action Action, client *discordgo.Session) {
 	switch action.actionType.name {
 	case "addemoji":
 		client.GuildEmojiCreate(SERVERID, action.info, urlToDataScheme(action.info2), nil)
+	case "voicechannelcreate":
+		client.GuildChannelCreate(SERVERID, action.info, discordgo.ChannelTypeGuildVoice)
+		break
 	case "textchannelcreate":
 		client.GuildChannelCreate(SERVERID, action.info, discordgo.ChannelTypeGuildText)
 		break
@@ -75,6 +78,11 @@ func actionResult(action Action, client *discordgo.Session) {
 		}
 
 		client.GuildMemberRoleRemove(SERVERID, action.info2, selected.ID)
+		break
+	case "renameserver":
+		client.GuildEdit(SERVERID, discordgo.GuildParams{
+			Name: action.info,
+		})
 		break
 	}
 
