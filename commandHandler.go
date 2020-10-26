@@ -47,6 +47,8 @@ func onMessage(client *discordgo.Session, msg *discordgo.MessageCreate) {
 		%propose applyrole "role name" @username
 		%propose removerole "role name" @username
 		%propose addemoji "emojiName,discordfileurl"
+		%propose servericonchange "discordfileurl"
+		%propose renameserver "new server name"
 		`)
 	}
 

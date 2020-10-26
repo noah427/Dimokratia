@@ -29,6 +29,7 @@ func initActionTypes() {
 	actionTypes = append(actionTypes, ActionType{name: "removerole", votingTimeMinutes: 30, approvalPercentage: 51, infoNeeded: true})
 	actionTypes = append(actionTypes, ActionType{name: "addemoji", votingTimeMinutes: 30, approvalPercentage: 51, infoNeeded: true})
 	actionTypes = append(actionTypes, ActionType{name: "renameserver", votingTimeMinutes: 30, approvalPercentage: 51, infoNeeded: true})
+	actionTypes = append(actionTypes, ActionType{name: "servericonchange", votingTimeMinutes: 30, approvalPercentage: 51, infoNeeded: true})
 }
 
 func parseActionProposal(msg *discordgo.MessageCreate, client *discordgo.Session) {
