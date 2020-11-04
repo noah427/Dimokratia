@@ -2,6 +2,9 @@
 
 direct democracy bot for discord.
 
+## Currently working on:
+data base for actions that require a database
+
 ## actions that can be voted on as of now :
 
 * create channel
@@ -13,12 +16,13 @@ direct democracy bot for discord.
 * remove x role from user
 * add emoji
 * change server name
+* change server pfp
 
 ## actions that will be possible to vote on in the future :
 
 ### sooner
 
-* change server pfp
+* change voting time for action
 
 ### later
 
